@@ -1,0 +1,32 @@
+---
+# Unzip elasticsarch file
+  - name: Unarchive elasticsearch-6.3.2.zip
+    unarchive:
+      src: /vagrant/elasticsearch-6.3.2.zip
+      dest: /data/
+      remote_src: yes
+      owner: operation
+      group: operation
+
+  - name: config vm.max_map_count=262144
+    shell: "sysctl -w vm.max_map_count=262144"
+
+  - name: modify bind ip in elasicsearch.yml
+    lineinfile:
+      path: /data/elasticsearch-6.3.2/config/elasticsearch.yml
+      regexp: '^#network.host: 192.168.0.1'
+      line: 'network.host: 0.0.0.0'
+
+  - name: Unarchive kibana-6.3.2-linux-x86_64.tar.gz
+    unarchive:
+      src: /vagrant/kibana-6.3.2-linux-x86_64.tar.gz
+      dest: /data/
+      remote_src: yes
+      owner: operation
+      group: operation
+
+  - name: modify bind ip in kibana.yml
+    lineinfile:
+      path: /data/kibana-6.3.2-linux-x86_64/config/kibana.yml
+      regexp: '^#server.host:'
+      line: 'server.host: "0.0.0.0"'
