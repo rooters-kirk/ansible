@@ -1,0 +1,10 @@
+---
+- name: install logstash
+  hosts: logstash
+  become: yes
+  become_method: sudo
+  remote_user: operation
+
+  roles:
+    - java
+    - logstash

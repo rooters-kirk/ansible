@@ -1,5 +1,5 @@
 ---
-- name: install jenkins
+- name: install elasticsearch and kibana
   hosts: elasticsearch
   become: yes
   become_method: sudo
