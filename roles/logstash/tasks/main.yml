@@ -1,0 +1,9 @@
+---
+# Unzip elasticsarch file
+  - name: Unarchive logstash-6.3.0.zip
+    unarchive:
+      src: /vagrant/logstash-6.3.0.zip
+      dest: /data/
+      remote_src: yes
+      owner: operation
+      group: operation
