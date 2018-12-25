@@ -1,0 +1,53 @@
+---
+# Install jenkins
+  #- name: Copy jenkins.war to jenkins node
+  #  copy:
+  #    src: jenkins.war
+  #    dest: /pang/jenkins.war
+  #    owner: jenkins
+  #    group: jenkins
+
+  - name: Install jenkins for configurion environment
+    shell: "wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add -"
+
+  - name: Install jenkins for configurion environment adding jenkins packages
+    shell: "sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'"
+
+  - name: Install jenkins using apt-get
+    apt:
+      name: jenkins
+      state: present
+      update_cache: yes
+
+  - name: Start jenkins
+    service:
+      name: jenkins
+      state: started
+      enabled: yes
+
+  - name: replace https to http in config file in jenkins
+    lineinfile:
+      dest: /var/lib/jenkins/hudson.model.UpdateCenter.xml
+      state: present
+      regexp: "<url>https://updates.jenkins.io/update-center.json</url>"
+      line: "<url>http://updates.jenkins.io/update-center.json</url>"
+    notify: restart jenkins
+
+  - name: create .ssh directory
+    file:
+      path: /var/lib/jenkins/.ssh
+      state: directory
+      owner: jenkins
+      group: jenkins
+    when: user_type == 'slave'
+
+
+  - name: copy ssh public key to jenkins slave
+    copy:
+      src: .ssh/authorized_keys
+      dest: /var/lib/jenkins/.ssh/authorized_keys
+      owner: jenkins
+      group: jenkins
+    when: user_type == 'slave'
+
+
